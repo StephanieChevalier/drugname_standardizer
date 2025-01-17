@@ -137,7 +137,7 @@ pip install drugname_standardizer
     - Resolves potential naming conflicts by selecting the shortest *Display Name* (55 / 986397 associations).
 
 2. Standardize Names:
-    - For a single drug name: return the preferred name
+    - For a single drug name: return the preferred name.
     - For a list of drug names: maps drug names to their preferred names and return the updated list.
     - For JSON input: Maps drug names to their preferred names and saves the results to a JSON file.
     - For CSV input: Updates the specified column with standardized drug names and saves the modified DataFrame to a CSV file.
