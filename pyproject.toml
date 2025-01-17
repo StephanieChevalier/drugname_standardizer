@@ -10,13 +10,13 @@ readme = "README.md"
 authors = [
     {name = "Stéphanie Chevalier", email = "pro.stephaniechevalier@gmail.com"}
 ]
-license = "MIT"
+license = {text = "MIT"}
 dependencies = [
     "pandas>=1.0",
     "requests>=2.0",
 ]
 requires-python = ">=3.7"
-keywords = ["drug", "drug name synonyms", "standardization", "FDA", "UNII"]
+keywords = ["drugs", "drug name synonyms", "standardization", "FDA", "UNII"]
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
