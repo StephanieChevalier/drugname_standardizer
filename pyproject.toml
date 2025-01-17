@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "drugname_standardizer"
+version = "1.0.0"
+description = "A Python tool for standardizing drug names using the FDA UNII Names List."
+readme = "README.md"
+authors = [
+    {name = "Stéphanie Chevalier", email = "pro.stephaniechevalier@gmail.com"}
+]
+license = {text = "MIT"}
+dependencies = [
+    "pandas>=1.0",
+    "requests>=2.0",
+]
+requires-python = ">=3.7"
+keywords = ["drug-names", "standardization", "FDA", "UNII"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/StephanieChevalier/drugname_standardizer"
+
+[tool.setuptools.packages.find]
+include = ["drugname_standardizer"]
+
+[tool.setuptools.package-data]
+drugname_standardizer = ["data/UNII_Names_20Dec2024.txt"]
+
+[project.scripts]
+drugname_standardizer = "drugname_standardizer.standardizer:main"
+

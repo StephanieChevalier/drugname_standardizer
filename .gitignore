@@ -1,0 +1,24 @@
+# Distribution / Packaging
+*.egg-info/
+*.egg
+build/
+dist/
+
+# Byte-compiled files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+.env/
+.venv/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Data
+data/
