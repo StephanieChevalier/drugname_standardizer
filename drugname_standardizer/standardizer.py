@@ -6,14 +6,14 @@ import requests
 import zipfile
 import pickle
 
-DEFAULT_UNII_FILE = Path(__file__).parent.parent / "data" / "UNII_Names_20Dec2024.txt"
+DEFAULT_UNII_FILE = Path(__file__).parent / "data"
 DOWNLOAD_URL = "https://precision.fda.gov/uniisearch/archive/latest/UNIIs.zip"
 
 class DownloadError(Exception):
     """Custom exception for download-related issues."""
     pass
 
-def download_unii_file(download_url=DOWNLOAD_URL, extract_to=DEFAULT_UNII_FILE.parent):
+def download_unii_file(download_url=DOWNLOAD_URL, extract_to=DEFAULT_UNII_FILE):
     """
     Downloads and extracts the UNII file from the specified URL.
 
