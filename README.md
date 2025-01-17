@@ -35,30 +35,40 @@ You can use the package programmatically in your Python scripts:
 
 ```python
 from drugname_standardizer.standardizer import standardize_drug_names
+```
 
-# Get the preferred name for a specific drug
+#### Get the preferred name for a specific drug
+```python
 drug_name = "GDC-0199"
 preferred_name = standardize_drug_names(drug_name)
 print(preferred_name)  # Outputs: VENETOCLAX
+```
 
-# Get the preferred names for a list of drugs
+#### Standardize a list of drugs
+```python
 drug_names = ["GDC-0199", "Aptivus", "diodrast"]
 preferred_name = standardize_drug_names(drug_names)
 print(preferred_name)  # Outputs: ["VENETOCLAX", "TIPRANAVIR", "IODOPYRACET"]
+```
 
-# Standardize a JSON file
+#### Standardize a JSON file
+```python
 standardize_drug_names(
     input_file="drugs.json",
     output_file="standardized_drugs.json",
     file_type="json"
-) # Outputs: Standardized JSON file saved as standardized_drugs.json
+)
+# Outputs: Standardized JSON file saved as standardized_drugs.json
+```
 
-# Standardize a CSV file
+#### Standardize a CSV file
+```python
 standardize_drug_names(
     input_file="dataset.csv",
     file_type="csv",
     column_index=1
-) # Outputs: Standardized CSV file saved as dataset_drug_standardized.csv
+)
+# Outputs: Standardized CSV file saved as dataset_drug_standardized.csv
 ```
 
 ### Command-Line Interface
