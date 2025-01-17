@@ -6,21 +6,22 @@ The **Drugname Standardizer** is a Python tool for standardizing drug names usin
 
 ## Features
 
-### A trusted source for drug synonyms
+- **A trusted source for drug synonyms** : the package automatically downloads the latest version of the *UNII Names* file from [the official FDA repository](https://precision.fda.gov/uniisearch/archive/latest/UNIIs.zip).
+The `UNII_Names_DDMmmYYYY.txt` is saved to the package's `data/` folder for future use. The user can also choose to indicate another local *UNII Names* file.
 
-**The package automatically downloads the latest version of the *UNII Names* file from [the official FDA repository](https://precision.fda.gov/uniisearch/archive/latest/UNIIs.zip).**
-The file is saved to the package's `data/` folder for future use. The user can also choose to indicate another local *UNII Names* file.
-
-### Key points
 - **Parsing of the FDA's UNII Names List to map drug names** (code / official / systematic / common / brand names) **to a single preferred name** (i.e. the *Display Name* of the UNII Names file).
-- Input versatility by directly handling:
+
+- Input versatility:
    - a single drug name,
    - a list of drug names,
    - a JSON input file (a list of drugs to standardize)
    - a CSV input file (a dataframe containing a column of drugs to standardize)
-- Provides both **a Python package interface for scripting** and **a command-line interface (CLI) for ease of use**.
-- Resolves naming ambiguities by selecting the shortest name if several *Display Names*.  
-(a few cases in the UNII file: 55 among 986397 associations in version December 2024)
+
+- Provides both **a Python package interface for scripting** and **a command-line interface (CLI) for direct use**.
+
+- Resolves naming ambiguities of the FDA's UNII Names file by selecting the shortest *Display Names*. Rare but exists: 55 / 986397 associations in `UNII_Names_20Dec2024.txt`. For example, for `PRN1008` the ambiguity is solved by keeping `RILZABRUTINIB` whereas 2 associations exist:
+   - `PRN1008`	...	... `RILZABRUTINIB, (.ALPHA.E,3S)-`
+   - `PRN1008`	...	... `RILZABRUTINIB`  
 
 
 ---
@@ -106,7 +107,13 @@ drugname_standardizer -i dataset.csv -f csv -c 2 -s "\t" -o standardized_dataset
 
 ## Installation
 
-### Clone the repository and install the dependencies:
+### Using pip
+
+```bash
+python3 -m pip install drugname_standardizer
+```
+
+### GitHub repository
 
 ```bash
 git clone https://github.com/StephanieChevalier/drugname_standardizer.git
@@ -148,7 +155,7 @@ pip install drugname_standardizer
 ```
 drugname_standardizer/
 ├── data/
-│   └── UNII_Names_20Dec2024.txt  # Default UNII Names List file
+│   └── UNII_Names_20Dec2024.txt  # UNII Names List file example
 ├── drugname_standardizer/
 │   ├── __init__.py               # Package initialization
 │   ├── standardizer.py           # Core logic for name standardization
