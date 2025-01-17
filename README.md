@@ -23,6 +23,11 @@ The `UNII_Names_DDMmmYYYY.txt` is saved to the package's `data/` folder for futu
    - `PRN1008`	...	... `RILZABRUTINIB, (.ALPHA.E,3S)-`
    - `PRN1008`	...	... `RILZABRUTINIB`  
 
+### **Warning:**
+
+There are code / official / systematic / common / brand names for drugs. **Some are linked to different level of details on the compound.**
+**The standardization proposed here gathers information at the "upper" level (i.e. the less detailled one).** I relied on the "Preferred Substance Name" (= the *Display name* field) indicated in the correspondence table provided by the FDA.  
+For instance : `3'-((1R)-1-((6R)-5,6-DIHYDRO-4-HYDROXY-2-OXO-6-PHENETHYL-6-PROPYL-2H-PYRAN-3-YL)PROPYL)-5-(TRIFLUOROMETHYL)-2-PYRIDINESULFONANILIDE` becomes `TIPRANAVIR`. 
 
 ---
 
