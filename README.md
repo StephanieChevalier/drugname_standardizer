@@ -8,7 +8,7 @@ The **Drugname Standardizer** is a Python tool for standardizing drug names usin
 
 ### A trusted source for drug synonyms
 - Default UNII File:  
-**Automatically downloads the latest UNII file from the FDA's official archive if not already present in `drugname_standardizer/data/` folder.**  
+**Automatically downloads the latest *UNII Names* file from the official FDA archive** if no UNII Names file is not already present in `drugname_standardizer/data/` folder.  
 *(https://precision.fda.gov/uniisearch/archive/latest/UNIIs.zip &rarr; UNII_Names_20Dec2024.txt)*
 - Custom UNII File:  
 **Users can download a UNII Names List file themselves from the FDA's UNII Archive** and specify its path.
