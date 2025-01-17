@@ -6,14 +6,15 @@ import requests
 import zipfile
 import pickle
 
-DEFAULT_UNII_FILE = Path(__file__).parent / "data"
+DEFAULT_UNII_FILE_PATH = Path(__file__).parent / "data"
+DEFAULT_UNII_FILE = Path(__file__).parent / "data" / "UNII_Names_20Dec2024.txt"
 DOWNLOAD_URL = "https://precision.fda.gov/uniisearch/archive/latest/UNIIs.zip"
 
 class DownloadError(Exception):
     """Custom exception for download-related issues."""
     pass
 
-def download_unii_file(download_url=DOWNLOAD_URL, extract_to=DEFAULT_UNII_FILE):
+def download_unii_file(download_url=DOWNLOAD_URL, extract_to=DEFAULT_UNII_FILE_PATH):
     """
     Downloads and extracts the UNII file from the specified URL.
 
@@ -100,7 +101,15 @@ def parse_unii_file(file_path=None):
                 f"You can rerun the script without specifying a file path to automatically download the latest UNII Names file."
             )
     else:
-        file_path = DEFAULT_UNII_FILE
+        if DEFAULT_UNII_FILE_PATH.exists():
+            # Filter files in the data folder that start with "UNII_Names_"
+            file_name = next((file for file in os.listdir(DEFAULT_UNII_FILE_PATH) if file.startswith("UNII_Names_")), None)
+            if file_name != None:
+                file_path = DEFAULT_UNII_FILE_PATH / file_name
+            else:
+                file_path = DEFAULT_UNII_FILE
+        else:
+            file_path = DEFAULT_UNII_FILE
 
     if not file_path.exists():
         print(f"Attempting to download the latest UNII file...")
