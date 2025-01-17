@@ -53,8 +53,8 @@ print(preferred_name)  # Outputs: VENETOCLAX
 **- Standardize a list of drugs:**
 ```python
 drug_names = ["GDC-0199", "Aptivus", "diodrast"]
-preferred_name = standardize_drug_names(drug_names)
-print(preferred_name)  # Outputs: ["VENETOCLAX", "TIPRANAVIR", "IODOPYRACET"]
+preferred_names = standardize_drug_names(drug_names)
+print(preferred_names)  # Outputs: ["VENETOCLAX", "TIPRANAVIR", "IODOPYRACET"]
 ```
 
 **- Standardize a JSON file:**
