@@ -7,14 +7,12 @@ The **Drugname Standardizer** is a Python tool for standardizing drug names usin
 ## Features
 
 ### A trusted source for drug synonyms
-- Default UNII File:  
-**Automatically downloads the latest *UNII Names* file from the official FDA archive** if no UNII Names file is not already present in `drugname_standardizer/data/` folder.  
-*(https://precision.fda.gov/uniisearch/archive/latest/UNIIs.zip &rarr; UNII_Names_20Dec2024.txt)*
-- Custom UNII File:  
-**Users can download a UNII Names List file themselves from the FDA's UNII Archive** and specify its path.
+
+**The package automatically downloads the latest version of the *UNII Names* file from [the official FDA repository](https://precision.fda.gov/uniisearch/archive/latest/UNIIs.zip).**
+The file is saved to the package's `data/` folder for future use. The user can also choose to indicate another local *UNII Names* file.
 
 ### Key points
-- **Parses the FDA UNII Names List to map drug names** (code / official / systematic / common / brand names) **to a single preferred name** (i.e. the *Display Name* of the UNII Names file).
+- **Parsing of the FDA's UNII Names List to map drug names** (code / official / systematic / common / brand names) **to a single preferred name** (i.e. the *Display Name* of the UNII Names file).
 - Input versatility by directly handling:
    - a single drug name,
    - a list of drug names,
@@ -34,24 +32,26 @@ The **Drugname Standardizer** is a Python tool for standardizing drug names usin
 You can use the package programmatically in your Python scripts:
 
 ```python
-from drugname_standardizer.standardizer import standardize_drug_names
+from drugname_standardizer import standardize_drug_names
 ```
 
-#### Get the preferred name for a specific drug:
+#### Examples:
+
+**- Get the preferred name for a specific drug:**
 ```python
 drug_name = "GDC-0199"
 preferred_name = standardize_drug_names(drug_name)
 print(preferred_name)  # Outputs: VENETOCLAX
 ```
 
-#### Standardize a list of drugs:
+**- Standardize a list of drugs:**
 ```python
 drug_names = ["GDC-0199", "Aptivus", "diodrast"]
 preferred_name = standardize_drug_names(drug_names)
 print(preferred_name)  # Outputs: ["VENETOCLAX", "TIPRANAVIR", "IODOPYRACET"]
 ```
 
-#### Standardize a JSON file:
+**- Standardize a JSON file:**
 ```python
 standardize_drug_names(
     input_file="drugs.json",
@@ -61,7 +61,7 @@ standardize_drug_names(
 # Outputs: Standardized JSON file saved as standardized_drugs.json
 ```
 
-#### Standardize a CSV file:
+**- Standardize a CSV file:**
 ```python
 standardize_drug_names(
     input_file="dataset.csv",
@@ -75,43 +75,31 @@ standardize_drug_names(
 
 You can also use a CLI for standardizing JSON and CSV files.
 
-* **Required Arguments:**
-    - `--input`, `-i`: Path to the input file (JSON or CSV).
-* **Optional Arguments:**
-  - `--file_type`, `-f`: Type of the input file. Accepted values: `json`, `csv`.
-  - `--output`, `-o`: Path to the output file. Defaults to the input file name with `_drug_standardized` added before the extension.
-  - `--column_index`, `-c`: Index of the column containing the drug names to standardize (required for CSV files).
-  - `--separator`, `-s`: Field separator for CSV files. Defaults to `,`.
-  - `--unii_file`, `-u`: Path to the UNII Names List file. Defaults: automatic download of the latest.
+* Required arguments:
+    - `--input`, `-i`: **A drug name or the path to a JSON/CSV file**
+* Optional arguments:
+  - `--file_type`, `-f`: **Type of the input file** (`json` or `csv`)
+  - `--output`, `-o`: **The output file name** (relative path can be given). Defaults: the input file name with `_drug_standardized` added before the extension.
+  - `--column_index`, `-c`: **Index of the column containing the drug names to standardize** (required for CSV files).
+  - `--separator`, `-s`: **Field separator for CSV files**. Defaults: `,`.
+  - `--unii_file`, `-u`: **Path to a UNII Names List file**. Defaults: automatic download of the latest version.
 
-#### Get the preferred name for a specific drug
+#### Examples:
+
+**- Get the preferred name for a specific drug:**
 ```bash
 drugname_standardizer -i "DynaCirc"
 ```
 
-#### Standardize a JSON file
+**- Standardize a JSON file:**
 ```bash
 drugname_standardizer -i drugs.json -f json
 ```
 
-##### Standardize a CSV file
-For instance, using custom separator and outputfile name:
+**- Standardize a CSV file:**
+e.g., using custom separator and outputfile name:
 ```bash
 drugname_standardizer -i dataset.csv -f csv -c 2 -s "\t" -o standardized_dataset.csv
-```
-
----
-
-## Automatic download of the UNII file
-
-**If the required UNII file is not found locally, the package automatically downloads the latest version from the FDA's official repository.** The file is saved to the package's `data/` directory for future use.
-
-You can also manually trigger the download by calling:
-
-```python
-from drugname_standardizer.standardizer import download_unii_file
-
-download_unii_file()
 ```
 
 ---
@@ -168,9 +156,9 @@ drugname_standardizer/
 │   ├── __init__.py               
 │   └── test_standardizer.py      # Unit tests for the package
 ├── LICENSE                       # MIT License
+├── pyproject.toml                # Package configuration
 ├── README.md                     # Project documentation
-├── requirements.txt              # Development dependencies
-└── pyproject.toml                # Package configuration
+└── requirements.txt              # Development dependencies
 ```
 
 ---
