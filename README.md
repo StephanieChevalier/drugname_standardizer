@@ -37,21 +37,21 @@ You can use the package programmatically in your Python scripts:
 from drugname_standardizer.standardizer import standardize_drug_names
 ```
 
-#### Get the preferred name for a specific drug
+#### Get the preferred name for a specific drug:
 ```python
 drug_name = "GDC-0199"
 preferred_name = standardize_drug_names(drug_name)
 print(preferred_name)  # Outputs: VENETOCLAX
 ```
 
-#### Standardize a list of drugs
+#### Standardize a list of drugs:
 ```python
 drug_names = ["GDC-0199", "Aptivus", "diodrast"]
 preferred_name = standardize_drug_names(drug_names)
 print(preferred_name)  # Outputs: ["VENETOCLAX", "TIPRANAVIR", "IODOPYRACET"]
 ```
 
-#### Standardize a JSON file
+#### Standardize a JSON file:
 ```python
 standardize_drug_names(
     input_file="drugs.json",
@@ -61,7 +61,7 @@ standardize_drug_names(
 # Outputs: Standardized JSON file saved as standardized_drugs.json
 ```
 
-#### Standardize a CSV file
+#### Standardize a CSV file:
 ```python
 standardize_drug_names(
     input_file="dataset.csv",
@@ -73,38 +73,31 @@ standardize_drug_names(
 
 ### Command-Line Interface
 
-You can also use a CLI for standardizing JSON and CSV files. Run the following command:
+You can also use a CLI for standardizing JSON and CSV files.
 
+* **Required Arguments:**
+    - `--input`, `-i`: Path to the input file (JSON or CSV).
+* **Optional Arguments:**
+  - `--file_type`, `-f`: Type of the input file. Accepted values: `json`, `csv`.
+  - `--output`, `-o`: Path to the output file. Defaults to the input file name with `_drug_standardized` added before the extension.
+  - `--column_index`, `-c`: Index of the column containing the drug names to standardize (required for CSV files).
+  - `--separator`, `-s`: Field separator for CSV files. Defaults to `,`.
+  - `--unii_file`, `-u`: Path to the UNII Names List file. Defaults: automatic download of the latest.
+
+#### Get the preferred name for a specific drug
 ```bash
-drugname_standardizer --input <input_file> --file_type <file_type> [options]
+drugname_standardizer -i "DynaCirc"
 ```
 
-#### Required Arguments:
-- `--input`: Path to the input file (JSON or CSV).
-- `--file_type`: Type of the input file. Accepted values: `json`, `csv`.
-
-#### Optional Arguments:
-- `--output`: Path to the output file. Defaults to the input file name with `_drug_standardized` added before the extension.
-- `--column_index`: Index of the column containing the drug names to standardize (required for CSV files).
-- `--separator`: Field separator for CSV files. Defaults to `,`.
-- `--unii_file`: Path to the UNII Names List file. Defaults: automatic download of the latest.
-
-
-#### Example usage
-
-##### Standardize a JSON file
+#### Standardize a JSON file
 ```bash
-drugname_standardizer --input drugs.json --file_type json
+drugname_standardizer -i drugs.json -f json
 ```
+
 ##### Standardize a CSV file
-
-- using a custom separator and outputfile name
+For instance, using custom separator and outputfile name:
 ```bash
-drugname_standardizer --input drugs.csv --file_type csv --column_index 2 --separator "\t" --output standardized_drugs.csv
-```
-- using a local UNII file version
-```bash
-drugname_standardizer --input drugs.csv --file_type csv --column_index 0 --unii_file UNII_Names_20Dec2024.txt
+drugname_standardizer -i dataset.csv -f csv -c 2 -s "\t" -o standardized_dataset.csv
 ```
 
 ---
@@ -172,12 +165,12 @@ drugname_standardizer/
 │   ├── __init__.py               # Package initialization
 │   ├── standardizer.py           # Core logic for name standardization
 ├── tests/
-│   ├── __init__.py               # Marks the tests directory as a package
+│   ├── __init__.py               
 │   └── test_standardizer.py      # Unit tests for the package
 ├── LICENSE                       # MIT License
 ├── README.md                     # Project documentation
 ├── requirements.txt              # Development dependencies
-└── pyproject.toml                # Consolidated package configuration
+└── pyproject.toml                # Package configuration
 ```
 
 ---

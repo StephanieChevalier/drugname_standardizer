@@ -106,6 +106,7 @@ def parse_unii_file(file_path=None):
         print(f"Attempting to download the latest UNII file...")
         file_path = download_unii_file()
 
+    print("Parsing of the UNII Names file...")
     with open(file_path, "r") as file:
         lines = file.readlines()
 
@@ -178,7 +179,8 @@ def standardize_drug_names(
     file_type=None,
     column_index=None,
     separator=",",
-    unii_file=None
+    unii_file=None,
+    cli_mode=False
 ):
     """
     Standardize drug names using a dictionary derived from the FDA's UNII Names List.
@@ -267,7 +269,10 @@ def standardize_drug_names(
         return standardize_drug_names_list(input_data, parsed_dict)
 
     elif isinstance(input_data, str):
-        return standardize_drug_name(input_data, parsed_dict)
+        standardized_name = standardize_drug_name(input_data, parsed_dict)
+        if cli_mode:
+            print(f"Standardized drug name: {standardized_name}")
+        return standardized_name
 
     else:
         raise ValueError("Unsupported input type. Provide a drug name, a list of drug names, or a valid file path to a JSON or a CSV file.")
@@ -275,13 +280,13 @@ def standardize_drug_names(
 def main():
     import argparse
 
-    parser = argparse.ArgumentParser(description="Standardize drug names using the FDA UNII Names List archive.")
-    parser.add_argument("--input", required=True, help="Input file path (JSON or CSV).")
-    parser.add_argument("--output", help="Output file path. Defaults to input file name with '_drug_standardized' before the extension.")
-    parser.add_argument("--file_type", choices=["json", "csv"], required=True, help="Type of input file.")
-    parser.add_argument("--column_index", type=int, help="Column index for CSV input.")
-    parser.add_argument("--separator", type=str, default=",", help="Field separator for CSV input. Defaults to ','.")
-    parser.add_argument("--unii_file", default=None, help="Path to the UNII file.")
+    parser = argparse.ArgumentParser(description="Standardize drug names using the official FDA UNII Names List archive.")
+    parser.add_argument("-i", "--input", required=True, help="Input file path (JSON or CSV).")
+    parser.add_argument("-o", "--output", help="Output file path. Defaults to input file name with '_drug_standardized' before the extension.")
+    parser.add_argument("-f", "--file_type", choices=["json", "csv"], required=False, help="Type of input file.")
+    parser.add_argument("-c", "--column_index", type=int, help="Column index for CSV input.")
+    parser.add_argument("-s", "--separator", type=str, default=",", help="Field separator for CSV input. Defaults to ','.")
+    parser.add_argument("-u", "--unii_file", default=None, help="Path to the UNII file.")
 
     args = parser.parse_args()
 
@@ -293,6 +298,7 @@ def main():
         column_index=args.column_index,
         separator=args.separator,
         unii_file=args.unii_file,
+        cli_mode=True,
     )
 
 if __name__ == "__main__":
