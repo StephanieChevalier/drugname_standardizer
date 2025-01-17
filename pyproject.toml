@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "drugname_standardizer"
-version = "1.0.0"
-description = "A Python tool for standardizing drug names using the FDA UNII Names List."
+version = "1.0.1"
+description = "A Python tool for standardizing drug names using the latest FDA's UNII Names list."
 readme = "README.md"
 authors = [
     {name = "Stéphanie Chevalier", email = "pro.stephaniechevalier@gmail.com"}
