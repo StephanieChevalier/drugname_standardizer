@@ -7,14 +7,14 @@ import zipfile
 import pickle
 
 DEFAULT_UNII_FILE_PATH = Path(__file__).parent / "data"
-DEFAULT_UNII_FILE = Path(__file__).parent / "data" / "UNII_Names_20Dec2024.txt"
+#DEFAULT_UNII_FILE = Path(__file__).parent / "data" / "UNII_Names_20Dec2024.txt"
 DOWNLOAD_URL = "https://precision.fda.gov/uniisearch/archive/latest/UNIIs.zip"
 
 class DownloadError(Exception):
     """Custom exception for download-related issues."""
     pass
 
-def download_unii_file(download_url=DOWNLOAD_URL, extract_to=DEFAULT_UNII_FILE_PATH):
+def download_unii_file(download_url: str = DOWNLOAD_URL, extract_to: Path = DEFAULT_UNII_FILE_PATH):
     """
     Downloads and extracts the UNII file from the specified URL.
 
@@ -68,10 +68,14 @@ def download_unii_file(download_url=DOWNLOAD_URL, extract_to=DEFAULT_UNII_FILE_P
     finally:
         # Clean up the ZIP file
         if zip_path.exists():
-            os.remove(zip_path)
+            zip_path.unlink()
             print(f"Removed temporary ZIP file: {zip_path}")
 
     # Find the UNII file in the extracted contents
+    for file in extract_to.iterdir():
+        if not file.name.startswith("UNII_Names"):
+            file.unlink()
+
     for file in extract_to.iterdir():
         if file.name.startswith("UNII_Names"):
             print(f"UNII file extracted to {file}")
@@ -81,7 +85,7 @@ def download_unii_file(download_url=DOWNLOAD_URL, extract_to=DEFAULT_UNII_FILE_P
     # If no valid UNII file is found, raise an error
     raise FileNotFoundError("UNII file not found in the downloaded archive.")
 
-def parse_unii_file(file_path=None):
+def parse_unii_file(file_path: str = None):
     """Parse the UNII source file to create a dictionary of drug name associations.
 
     Args:
@@ -97,19 +101,20 @@ def parse_unii_file(file_path=None):
         file_path = Path(file_path)
         if not file_path.exists():
             raise FileNotFoundError(
-                f"The specified UNII file path '{file_path}' is invalid or does not exist. "
-                f"You can rerun the script without specifying a file path to automatically download the latest UNII Names file."
+                f"The UNII Names file you give as argument ({file_path}) does not exist or its path is invalid.\n"
+                f"You can rerun the script without specifying it to automatically download the latest UNII Names file."
             )
     else: # If no precised path, search for a UNII_Names file in the folder
-        if DEFAULT_UNII_FILE_PATH.exists():
-            # Filter files in the data folder that start with "UNII_Names"
-            file_name = next((file for file in os.listdir(DEFAULT_UNII_FILE_PATH) if file.startswith("UNII_Names")), None)
-            if file_name != None:
-                file_path = DEFAULT_UNII_FILE_PATH / file_name
+        # Filter files that start with "UNII_Names"
+        path = DEFAULT_UNII_FILE_PATH
+        path.mkdir(parents=True, exist_ok=True)
+        for file in path.iterdir():
+            if file.name.startswith("UNII_Names"):
+                file_path = file
 
     if file_path is None:
         print(f"Attempting to download the latest UNII file...")
-        file_path = download_unii_file()
+        file_path = download_unii_file(extract_to=DEFAULT_UNII_FILE_PATH)
 
     print("Parsing of the UNII Names file...")
     with open(file_path, "r") as file:

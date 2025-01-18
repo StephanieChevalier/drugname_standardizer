@@ -12,26 +12,27 @@ class TestDrugnameStandardizer(unittest.TestCase):
         """Set up the test environment."""
         self.temp_files = []  # Track temporary files to remove them later
 
-        # Simulate a parsed UNII dictionary
-        self.test_dict = {
-            "4-(4-((2-(4-CHLOROPHENYL)-4,4-DIMETHYL-1-CYCLOHEXEN-1-YL)METHYL)-1-PIPERAZINYL)-N-((3-NITRO-4-(((TETRAHYDRO-2H-PYRAN-4-YL)METHYL)AMINO)PHENYL)SULFONYL)-2-(1H-PYRROLO(2,3-B)PYRIDIN-5-YLOXY)BENZAMIDE": "VENETOCLAX",
-            "4-(4-((2-(4-CHLOROPHENYL)-4,4-DIMETHYLCYCLOHEX-1-EN-1-YL)METHYL)PIPERAZIN-1-YL)-N-((3-NITRO-4-((TETRAHYDRO-2HPYRAN-4-YLMETHYL) AMINO)PHENYL)SULFONYL)-2-(1H-PYRROLO(2,3-B)PYRIDIN-5-YLOXY)BENZAMIDE": "VENETOCLAX",
-            "ABT199": "VENETOCLAX",
-            "ABT-199": "VENETOCLAX",
-            "BENZAMIDE, 4-(4-((2-(4-CHLOROPHENYL)-4,4-DIMETHYL-1-CYCLOHEXEN-1-YL)METHYL)-1-PIPERAZINYL)-N-((3-NITRO-4-(((TETRAHYDRO-2H-PYRAN-4-YL)METHYL)AMINO)PHENYL)SULFONYL)-2-(1H-PYRROLO(2,3-B)PYRIDIN-5-YLOXY)-": "VENETOCLAX",
-            "GDC-0199": "VENETOCLAX",
-            "RG7601": "VENETOCLAX",
-            "RG-7601": "VENETOCLAX",
-            "VENCLEXTA": "VENETOCLAX",
-            "VENCLYXTO": "VENETOCLAX",
-            "VENETOCLAX": "VENETOCLAX",
-            "VENETOCLAX [INN]": "VENETOCLAX",
-            "VENETOCLAX [JAN]": "VENETOCLAX",
-            "VENETOCLAX [MI]": "VENETOCLAX",
-            "VENETOCLAX [ORANGE BOOK]": "VENETOCLAX",
-            "VENETOCLAX [USAN]": "VENETOCLAX",
-            "VENETOCLAX [WHO-DD]": "VENETOCLAX",
-        }
+        self.test_dict = parse_unii_file()
+        # # Simulate a parsed UNII dictionary
+        # self.test_dict = {
+        #     "4-(4-((2-(4-CHLOROPHENYL)-4,4-DIMETHYL-1-CYCLOHEXEN-1-YL)METHYL)-1-PIPERAZINYL)-N-((3-NITRO-4-(((TETRAHYDRO-2H-PYRAN-4-YL)METHYL)AMINO)PHENYL)SULFONYL)-2-(1H-PYRROLO(2,3-B)PYRIDIN-5-YLOXY)BENZAMIDE": "VENETOCLAX",
+        #     "4-(4-((2-(4-CHLOROPHENYL)-4,4-DIMETHYLCYCLOHEX-1-EN-1-YL)METHYL)PIPERAZIN-1-YL)-N-((3-NITRO-4-((TETRAHYDRO-2HPYRAN-4-YLMETHYL) AMINO)PHENYL)SULFONYL)-2-(1H-PYRROLO(2,3-B)PYRIDIN-5-YLOXY)BENZAMIDE": "VENETOCLAX",
+        #     "ABT199": "VENETOCLAX",
+        #     "ABT-199": "VENETOCLAX",
+        #     "BENZAMIDE, 4-(4-((2-(4-CHLOROPHENYL)-4,4-DIMETHYL-1-CYCLOHEXEN-1-YL)METHYL)-1-PIPERAZINYL)-N-((3-NITRO-4-(((TETRAHYDRO-2H-PYRAN-4-YL)METHYL)AMINO)PHENYL)SULFONYL)-2-(1H-PYRROLO(2,3-B)PYRIDIN-5-YLOXY)-": "VENETOCLAX",
+        #     "GDC-0199": "VENETOCLAX",
+        #     "RG7601": "VENETOCLAX",
+        #     "RG-7601": "VENETOCLAX",
+        #     "VENCLEXTA": "VENETOCLAX",
+        #     "VENCLYXTO": "VENETOCLAX",
+        #     "VENETOCLAX": "VENETOCLAX",
+        #     "VENETOCLAX [INN]": "VENETOCLAX",
+        #     "VENETOCLAX [JAN]": "VENETOCLAX",
+        #     "VENETOCLAX [MI]": "VENETOCLAX",
+        #     "VENETOCLAX [ORANGE BOOK]": "VENETOCLAX",
+        #     "VENETOCLAX [USAN]": "VENETOCLAX",
+        #     "VENETOCLAX [WHO-DD]": "VENETOCLAX",
+        # }
 
     def tearDown(self):
         """Clean up temporary files."""
@@ -196,7 +197,7 @@ class TestDrugnameStandardizer(unittest.TestCase):
             )
 
         # Verify the exception message
-        self.assertIn("The specified UNII file path", str(context.exception))
+        self.assertIn("The UNII Names file you give as argument", str(context.exception))
 
     def test_broken_url(self):
         """
