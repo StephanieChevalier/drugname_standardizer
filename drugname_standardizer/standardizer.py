@@ -93,25 +93,21 @@ def parse_unii_file(file_path=None):
     Raises:
         FileNotFoundError: If a UNII path is given but the file does not exist.
     """
-    if file_path:
+    if file_path: # If user gives a path, go for it and raise and error (with advice) if incorrect.
         file_path = Path(file_path)
         if not file_path.exists():
             raise FileNotFoundError(
                 f"The specified UNII file path '{file_path}' is invalid or does not exist. "
                 f"You can rerun the script without specifying a file path to automatically download the latest UNII Names file."
             )
-    else:
+    else: # If no precised path, search for a UNII_Names file in the folder
         if DEFAULT_UNII_FILE_PATH.exists():
-            # Filter files in the data folder that start with "UNII_Names_"
-            file_name = next((file for file in os.listdir(DEFAULT_UNII_FILE_PATH) if file.startswith("UNII_Names_")), None)
+            # Filter files in the data folder that start with "UNII_Names"
+            file_name = next((file for file in os.listdir(DEFAULT_UNII_FILE_PATH) if file.startswith("UNII_Names")), None)
             if file_name != None:
                 file_path = DEFAULT_UNII_FILE_PATH / file_name
-            else:
-                file_path = DEFAULT_UNII_FILE
-        else:
-            file_path = DEFAULT_UNII_FILE
 
-    if not file_path.exists():
+    if file_path is None:
         print(f"Attempting to download the latest UNII file...")
         file_path = download_unii_file()
 
