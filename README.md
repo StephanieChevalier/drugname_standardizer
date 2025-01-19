@@ -38,7 +38,7 @@ For instance : both `3'-((1R)-1-((6R)-5,6-DIHYDRO-4-HYDROXY-2-OXO-6-PHENETHYL-6-
 You can use the package programmatically in your Python scripts:
 
 ```python
-from drugname_standardizer import standardize_drug_names
+from drugname_standardizer import standardize
 ```
 
 #### Examples:
@@ -46,20 +46,20 @@ from drugname_standardizer import standardize_drug_names
 **- Get the preferred name for a specific drug:**
 ```python
 drug_name = "GDC-0199"
-preferred_name = standardize_drug_names(drug_name)
+preferred_name = standardize(drug_name)
 print(preferred_name)  # Outputs: VENETOCLAX
 ```
 
 **- Standardize a list of drugs:**
 ```python
 drug_names = ["GDC-0199", "Aptivus", "diodrast"]
-preferred_names = standardize_drug_names(drug_names)
+preferred_names = standardize(drug_names)
 print(preferred_names)  # Outputs: ["VENETOCLAX", "TIPRANAVIR", "IODOPYRACET"]
 ```
 
 **- Standardize a JSON file:**
 ```python
-standardize_drug_names(
+standardize(
     input_file="drugs.json",
     output_file="standardized_drugs.json",
     file_type="json"
@@ -69,7 +69,7 @@ standardize_drug_names(
 
 **- Standardize a CSV file:**
 ```python
-standardize_drug_names(
+standardize(
     input_file="dataset.csv",
     file_type="csv",
     column_index=1

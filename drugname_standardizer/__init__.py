@@ -9,7 +9,7 @@ Modules:
   and standardizing drug names in files.
 
 Usage:
-    from drugname_standardizer import standardize_drug_names
+    from drugname_standardizer import standardize
 
 Release Date: January 16, 2025C
 """
@@ -19,4 +19,4 @@ __author__ = "Stéphanie Chevalier"
 __license__ = "MIT"
 __release_date__ = "2025-01-16"
 
-from .standardizer import parse_unii_file, standardize_drug_names
+from .standardizer import parse_unii_file, standardize

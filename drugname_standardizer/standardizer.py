@@ -1,10 +1,13 @@
 import json
 import pandas as pd
 from pathlib import Path
-import os
 import requests
 import zipfile
 import pickle
+import os
+from tqdm import tqdm
+from urllib.parse import urlparse, unquote
+from datetime import datetime, timedelta
 
 DEFAULT_UNII_FILE_PATH = Path(__file__).parent / "data"
 #DEFAULT_UNII_FILE = Path(__file__).parent / "data" / "UNII_Names_20Dec2024.txt"
@@ -32,19 +35,32 @@ def download_unii_file(download_url: str = DOWNLOAD_URL, extract_to: Path = DEFA
     # Ensure the target directory exists
     extract_to.mkdir(parents=True, exist_ok=True)
 
-    # Path for the downloaded ZIP file
-    zip_path = extract_to / "UNIIs.zip"
-
-    try:
-        # Download the ZIP file
+    try: # Download the ZIP file
         print("----------------------------------------------------------------------")
         print(f"Downloading UNII file from {download_url}...")
+
         response = requests.get(download_url, stream=True, timeout=30)  # Added timeout
         response.raise_for_status()  # Raise an HTTPError for bad responses
+
+        # Parse the URL to remove query parameters and get the actual file name
+        parsed_url = urlparse(response.url)
+        filename = os.path.basename(parsed_url.path)
+        # Decode URL-encoded characters (e.g., %20 -> space)
+        filename = unquote(filename)
+
+        # Path for the downloaded ZIP file
+        zip_path = extract_to / filename
+        #print(f"DEBUG: zip_path : {zip_path}")
+
         with open(zip_path, "wb") as f:
-            for chunk in response.iter_content(chunk_size=8192):
-                f.write(chunk)
-        print(f"Downloaded to {zip_path}")
+            total_size = int(response.headers.get('content-length', 0))
+            with tqdm(total=total_size, unit='B', unit_scale=True, desc="Downloading") as progress_bar:
+                for chunk in response.iter_content(chunk_size=8192):
+                    f.write(chunk)
+                    progress_bar.update(len(chunk))
+
+        #print(f"DEBUG: Download complete to {zip_path}.")
+
     except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as e:
         # Handle connection or timeout issues specifically
         raise DownloadError(
@@ -59,31 +75,33 @@ def download_unii_file(download_url: str = DOWNLOAD_URL, extract_to: Path = DEFA
         )
 
     try:
-        # Extract the ZIP file
-        with zipfile.ZipFile(zip_path, "r") as zip_ref:
-            zip_ref.extractall(extract_to)
-        print(f"Extracted UNII file to {extract_to}")
+        # Extract only the file that starts with "UNII_Names"
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            # Find the file that starts with "UNII_Names"
+            for zip_info in zip_ref.infolist():
+                if zip_info.filename.startswith("UNII_Names"):
+                    unii_file_name = zip_info.filename
+                    # Extract the specific file
+                    #print(f"DEBUG: Downloaded UNII file : {unii_file_name}")
+                    with zip_ref.open(unii_file_name) as source_file:
+                        dest_file_path = extract_to / "UNII_Names.txt"
+                        with open(dest_file_path, "wb") as dest_file:
+                            dest_file.write(source_file.read())
+                    #print(f"DEBUG: Extracted and copied content to {dest_file_path}")
+                    break  # Stop once the file is found and processed
+            else:
+                print("No file starting with 'UNII_Names' found in the archive.")
     except zipfile.BadZipFile as e:
         raise DownloadError(f"The downloaded file is not a valid ZIP file. Details: {e}")
     finally:
         # Clean up the ZIP file
         if zip_path.exists():
             zip_path.unlink()
-            print(f"Removed temporary ZIP file: {zip_path}")
-
-    # Find the UNII file in the extracted contents
-    for file in extract_to.iterdir():
-        if not file.name.startswith("UNII_Names"):
-            file.unlink()
-
-    for file in extract_to.iterdir():
-        if file.name.startswith("UNII_Names"):
-            print(f"UNII file extracted to {file}")
-            print("----------------------------------------------------------------------")
-            return file
-
-    # If no valid UNII file is found, raise an error
-    raise FileNotFoundError("UNII file not found in the downloaded archive.")
+            #print(f"DEBUG: Removed temporary ZIP file: {zip_path}")
+        if dest_file_path.exists():
+            print(f"UNII Names file extracted to {dest_file_path}")
+            print(f"----------------------------------------------------------------------")
+            return dest_file_path
 
 def parse_unii_file(file_path: str = None):
     """Parse the UNII source file to create a dictionary of drug name associations.
@@ -109,8 +127,13 @@ def parse_unii_file(file_path: str = None):
         path = DEFAULT_UNII_FILE_PATH
         path.mkdir(parents=True, exist_ok=True)
         for file in path.iterdir():
-            if file.name.startswith("UNII_Names"):
-                file_path = file
+            if file.name.startswith("UNII_Names") and file.stat().st_size > 1000:
+                # Get the last modification time
+                modification_time = datetime.fromtimestamp(file.stat().st_mtime)
+                # Calculate 3 months ago
+                three_months_ago = datetime.now() - timedelta(days=90)
+                if modification_time > three_months_ago:
+                    file_path = file
 
     if file_path is None:
         print(f"Attempting to download the latest UNII file...")
@@ -124,13 +147,23 @@ def parse_unii_file(file_path: str = None):
     data_lines = [line.strip().split("\t") for line in lines[1:]]
 
     parsed_dict = {}
-    for line in data_lines:
+
+    # Add tqdm progress bar when iterating over data_lines
+    for line in tqdm(data_lines, desc="Processing file data", unit="line"):
         name = line[0].upper()
         display_name = line[3].upper()
         if name not in parsed_dict:
             parsed_dict[name] = []
         if display_name not in parsed_dict[name]:
             parsed_dict[name].append(display_name)
+
+    # for line in data_lines:
+    #     name = line[0].upper()
+    #     display_name = line[3].upper()
+    #     if name not in parsed_dict:
+    #         parsed_dict[name] = []
+    #     if display_name not in parsed_dict[name]:
+    #         parsed_dict[name].append(display_name)
 
     parsed_dict = resolve_ambiguities(parsed_dict)
     return parsed_dict
@@ -140,11 +173,11 @@ def resolve_ambiguities(parsed_dict):
     return {name: min(values, key=len) if len(values) > 1 else values[0] for name, values in parsed_dict.items()}
 
 # Functions to handle each input type
-def standardize_drug_name(drug_name, parsed_dict):
+def standardize_name(drug_name, parsed_dict):
     """Standardize a single drug name."""
     return parsed_dict.get(drug_name.upper(), drug_name)
 
-def standardize_drug_names_list(drug_names, parsed_dict):
+def standardize_list(drug_names, parsed_dict):
     """Standardize a list of drug names."""
     return [parsed_dict.get(name.upper(), name) for name in drug_names]
 
@@ -152,7 +185,7 @@ def standardize_json_file(input_file, output_file, parsed_dict):
     """Standardize drug names in a JSON file."""
     with open(input_file, "r") as f:
         drug_names = json.load(f)
-    standardized_names = standardize_drug_names_list(drug_names, parsed_dict)
+    standardized_names = standardize_list(drug_names, parsed_dict)
     with open(output_file, "w") as f:
         json.dump(standardized_names, f, indent=4)
     print(f"Standardized JSON file saved as {output_file}")
@@ -183,7 +216,7 @@ def standardize_csv_file(input_file, output_file, column_index, separator, parse
     print(f"Standardized CSV file saved as {output_file}")
 
 # Wrapper function to handle various input types
-def standardize_drug_names(
+def standardize(
     input_data,
     output_file=None,
     file_type=None,
@@ -233,22 +266,22 @@ def standardize_drug_names(
 
     Examples:
         1. Standardizing a single drug name:
-            >>> standardize_drug_names("GDC-0199")
+            >>> standardize("GDC-0199")
             'VENETOCLAX'
 
         2. Standardizing a list of drug names:
-            >>> standardize_drug_names(["GDC-0199", "APTIVUS"])
+            >>> standardize(["GDC-0199", "APTIVUS"])
             ['VENETOCLAX', 'TIPRANAVIR']
 
         3. Standardizing drug names in a JSON file:
-            >>> standardize_drug_names(
+            >>> standardize(
                     input_data="drugs.json",
                     file_type="json",
                     output_file="standardized_drugs.json"
                 )
 
         4. Standardizing drug names in a CSV file:
-            >>> standardize_drug_names(
+            >>> standardize(
                     input_data="drugs.csv",
                     file_type="csv",
                     column_index=0,
@@ -276,10 +309,10 @@ def standardize_drug_names(
         standardize_csv_file(input_data, output_file, column_index, separator, parsed_dict)
 
     elif isinstance(input_data, list):
-        return standardize_drug_names_list(input_data, parsed_dict)
+        return standardize_list(input_data, parsed_dict)
 
     elif isinstance(input_data, str):
-        standardized_name = standardize_drug_name(input_data, parsed_dict)
+        standardized_name = standardize_name(input_data, parsed_dict)
         if cli_mode:
             print(f"Standardized drug name: {standardized_name}")
         return standardized_name
@@ -300,8 +333,8 @@ def main():
 
     args = parser.parse_args()
 
-    # Call the standardize_drug_names function with the appropriate arguments
-    standardize_drug_names(
+    # Call the standardize function with the appropriate arguments
+    standardize(
         input_data=args.input,
         output_file=args.output,
         file_type=args.file_type,

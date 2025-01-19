@@ -4,7 +4,7 @@ import json
 import pandas as pd
 from io import StringIO
 from pathlib import Path
-from drugname_standardizer.standardizer import parse_unii_file, standardize_drug_names, resolve_ambiguities, download_unii_file, DownloadError
+from drugname_standardizer.standardizer import parse_unii_file, standardize, resolve_ambiguities, download_unii_file, DownloadError
 
 
 class TestDrugnameStandardizer(unittest.TestCase):
@@ -68,7 +68,7 @@ class TestDrugnameStandardizer(unittest.TestCase):
         output_file = "test_output.json"
         self.temp_files.append(output_file)
 
-        standardize_drug_names(
+        standardize(
             input_data=str(input_file),
             output_file=output_file,
             file_type="json",
@@ -88,7 +88,7 @@ class TestDrugnameStandardizer(unittest.TestCase):
         output_file = "test_output.csv"
         self.temp_files.append(output_file)
 
-        standardize_drug_names(
+        standardize(
             input_data=str(input_file),
             output_file=output_file,
             file_type="csv",
@@ -106,13 +106,13 @@ class TestDrugnameStandardizer(unittest.TestCase):
     def test_unknown_drug_names(self):
         input_names = ["unknown_drug", "NON_EXISTENT", "FakeName"]
         expected_output = input_names  # Should return the same names if not found
-        actual_output = standardize_drug_names(input_names)
+        actual_output = standardize(input_names)
         self.assertEqual(expected_output, actual_output)
 
     def test_case_insensitivity(self):
         input_names = ["abt199", "rg7601", "VENCLEXTA"]
         expected_output = ["VENETOCLAX", "VENETOCLAX", "VENETOCLAX"]
-        actual_output = standardize_drug_names(input_names)
+        actual_output = standardize(input_names)
         self.assertEqual(expected_output, actual_output)
 
     def test_json_mixed_known_unknown(self):
@@ -121,7 +121,7 @@ class TestDrugnameStandardizer(unittest.TestCase):
         output_file = "test_output_mixed.json"
         self.temp_files.append(output_file)
 
-        standardize_drug_names(
+        standardize(
             input_data=str(input_file),
             output_file=output_file,
             file_type="json",
@@ -139,7 +139,7 @@ class TestDrugnameStandardizer(unittest.TestCase):
         output_file = "test_output_pipe.csv"
         self.temp_files.append(output_file)
 
-        standardize_drug_names(
+        standardize(
             input_data=str(input_file),
             output_file=output_file,
             file_type="csv",
@@ -157,7 +157,7 @@ class TestDrugnameStandardizer(unittest.TestCase):
         # Empty list
         input_names = []
         expected_output = []
-        actual_output = standardize_drug_names(input_names, self.test_dict)
+        actual_output = standardize(input_names, self.test_dict)
         self.assertEqual(expected_output, actual_output)
 
         # Empty JSON file
@@ -166,7 +166,7 @@ class TestDrugnameStandardizer(unittest.TestCase):
         output_file = "test_output_empty.json"
         self.temp_files.append(output_file)
 
-        standardize_drug_names(
+        standardize(
             input_data=str(input_file),
             output_file=output_file,
             file_type="json",
@@ -191,7 +191,7 @@ class TestDrugnameStandardizer(unittest.TestCase):
         invalid_path = "non_existent_path/UNII_Names.txt"
 
         with self.assertRaises(FileNotFoundError) as context:
-            standardize_drug_names(
+            standardize(
                 input_data="ABT199",  # Example input data
                 unii_file=invalid_path,  # Invalid path
             )
