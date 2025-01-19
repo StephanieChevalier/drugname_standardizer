@@ -159,11 +159,11 @@ pip install drugname_standardizer
 ## Package structure
 ```
 drugname_standardizer/
-├── data/
-│   └── UNII_Names.txt  # UNII Names List file (ensured to be no older than 1 month when available)
 ├── drugname_standardizer/
 │   ├── __init__.py               # Package initialization
 │   ├── standardizer.py           # Core logic for name standardization
+│   └── data/
+│       └── UNII_Names.txt  # UNII Names List file (ensured to be no older than 1 month when available)
 ├── tests/
 │   ├── __init__.py               
 │   └── test_standardizer.py      # Unit tests for the package

@@ -1,8 +1,8 @@
 """
 Drugname Standardizer Package
 
-This package is a tool for standardizing drug names based on the FDA UNII Names 
-List archive. It supports both JSON and CSV input/output formats.
+This package is a tool for standardizing drug names based on the FDA's UNII
+Names List archive. It supports to directly standardize from JSON and CSV.
 
 Modules:
 - standardizer: Core functions for parsing the UNII file, resolving ambiguities,
@@ -11,10 +11,10 @@ Modules:
 Usage:
     from drugname_standardizer import standardize
 
-Release Date: January 16, 2025C
+Release Date: January 16, 2025
 """
 
-__version__ = "1.0.0"
+__version__ = "1.1.2"
 __author__ = "Stéphanie Chevalier"
 __license__ = "MIT"
 __release_date__ = "2025-01-16"
