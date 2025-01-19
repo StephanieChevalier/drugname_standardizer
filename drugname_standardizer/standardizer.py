@@ -132,7 +132,7 @@ def parse_unii_file(file_path: str = None):
                 modification_time = datetime.fromtimestamp(file.stat().st_mtime)
                 # Calculate 3 months ago
                 one_month_ago = datetime.now() - timedelta(days=30)
-                if modification_time > three_months_ago:
+                if modification_time > one_month_ago:
                     file_path = file
 
     if file_path is None:
