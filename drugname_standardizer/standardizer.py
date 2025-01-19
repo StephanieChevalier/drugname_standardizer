@@ -131,7 +131,7 @@ def parse_unii_file(file_path: str = None):
                 # Get the last modification time
                 modification_time = datetime.fromtimestamp(file.stat().st_mtime)
                 # Calculate 3 months ago
-                three_months_ago = datetime.now() - timedelta(days=90)
+                one_month_ago = datetime.now() - timedelta(days=30)
                 if modification_time > three_months_ago:
                     file_path = file
 
@@ -251,8 +251,9 @@ def standardize(
         separator (str, optional):
             Field separator for CSV files. Defaults to ",". Only applicable if `file_type` is "csv".
         unii_file (str, optional):
-            Path to the UNII file containing the drug name mappings. Defaults to a pre-defined
-            UNII file location where the automatic download ends.
+            Path to a UNII file containing the drug name mappings, if a particular prior version is
+            preferred. Defaults to a pre-defined UNII file location where the automatic download of
+            the lattest version ends.
 
     Returns:
         list | str | None:
