@@ -1,6 +1,6 @@
 # Drugname Standardizer
 
-The **Drugname Standardizer** is a Python tool for standardizing drug names using [the official FDA's UNII Names List archive](https://precision.fda.gov/uniisearch/archive). It notably supports both JSON and CSV input formats, making it easy to ensure consistent drug naming in datasets.
+The **Drugname Standardizer** is a Python tool for standardizing drug names using [the official FDA's UNII Names List archive](https://precision.fda.gov/uniisearch/archive). It notably supports both JSON and TSV input formats, making it easy to ensure consistent drug naming in datasets.
 
 ---
 
@@ -15,7 +15,7 @@ The `UNII_Names.txt` is saved to the package's `data/` folder for future use. Th
    - a single drug name,
    - a list of drug names,
    - a JSON input file (a list of drugs to standardize)
-   - a CSV input file (a dataframe containing a column of drugs to standardize)
+   - a TSV input file (a dataframe containing a column of drugs to standardize)
 
 - Provides both **a Python package interface for scripting** and **a command-line interface (CLI) for direct use**.
 
@@ -67,27 +67,27 @@ standardize(
 # Outputs: Standardized JSON file saved as standardized_drugs.json
 ```
 
-**- Standardize a CSV file:**
+**- Standardize a TSV file:**
 ```python
 standardize(
-    input_file="dataset.csv",
-    file_type="csv",
-    column_index=1
+    input_file="dataset.tsv",
+    file_type="tsv",
+    column_drug=1
 )
-# Outputs: Standardized CSV file saved as dataset_drug_standardized.csv
+# Outputs: Standardized TSV file saved as dataset_drug_standardized.tsv
 ```
 
 ### Command-Line Interface
 
-You can also use a CLI for standardizing JSON and CSV files.
+You can also use a CLI for standardizing JSON and TSV files.
 
 * Required arguments:
-    - `--input`, `-i`: **A drug name or the path to a JSON/CSV file**
+    - `--input`, `-i`: **A drug name or the path to a JSON/TSV file**
 * Optional arguments:
-  - `--file_type`, `-f`: **Type of the input file** (`json` or `csv`)
+  - `--file_type`, `-f`: **Type of the input file** (`json` or `tsv`)
   - `--output`, `-o`: **The output file name** (relative path can be given). Defaults: the input file name with `_drug_standardized` added before the extension.
-  - `--column_index`, `-c`: **Index of the column containing the drug names to standardize** (required for CSV files).
-  - `--separator`, `-s`: **Field separator for CSV files**. Defaults: `,`.
+  - `--column_drug`, `-c`: **Index of the column containing the drug names to standardize** (required for TSV files).
+  - `--separator`, `-s`: **Field separator for TSV files**. Defaults: `\t`.
   - `--unii_file`, `-u`: **Path to a UNII Names List file**. Defaults: automatic download of the latest version.
 
 #### Examples:
@@ -102,10 +102,10 @@ drugname_standardizer -i "DynaCirc"
 drugname_standardizer -i drugs.json -f json
 ```
 
-**- Standardize a CSV file:**
-e.g., using custom separator and outputfile name:
+**- Standardize a TSV file:**
+e.g., using a comma as separator and a custom file name for the output:
 ```bash
-drugname_standardizer -i dataset.csv -f csv -c 2 -s "\t" -o standardized_dataset.csv
+drugname_standardizer -i dataset.tsv -f tsv -c 2 -s "," -o standardized_dataset.tsv
 ```
 
 ---
@@ -153,7 +153,7 @@ pip install drugname_standardizer
     - For a single drug name: return the preferred name.
     - For a list of drug names: maps drug names to their preferred names and return the updated list.
     - For JSON input: Maps drug names to their preferred names and saves the results to a JSON file.
-    - For CSV input: Updates the specified column with standardized drug names and saves the modified DataFrame to a CSV file.
+    - For TSV input: Updates the specified column with standardized drug names and saves the modified DataFrame to a TSV file.
 
 ---
 

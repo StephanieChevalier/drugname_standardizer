@@ -81,22 +81,22 @@ class TestDrugnameStandardizer(unittest.TestCase):
         expected_output = ["VENETOCLAX", "VENETOCLAX", "VENETOCLAX", "VENETOCLAX"]
         self.assertEqual(output_data, expected_output)
 
-    def test_csv_input(self):
-        # Simulate CSV input
-        input_csv = "id,drug_name\n1,ABT199\n2,RG7601\n3,VENETOCLAX [WHO-DD]"
-        input_file = self._create_temp_file(input_csv, "test_input.csv")
-        output_file = "test_output.csv"
+    def test_tsv_input(self):
+        # Simulate TSV input
+        input_tsv = "id,drug_name\n1,ABT199\n2,RG7601\n3,VENETOCLAX [WHO-DD]"
+        input_file = self._create_temp_file(input_tsv, "test_input.tsv")
+        output_file = "test_output.tsv"
         self.temp_files.append(output_file)
 
         standardize(
             input_data=str(input_file),
             output_file=output_file,
-            file_type="csv",
-            column_index=1,
+            file_type="tsv",
+            column_drug=1,
             separator=",",
         )
 
-        # Read and verify the output CSV file
+        # Read and verify the output TSV file
         with open(output_file, "r") as f:
             output_data = f.read()
 
@@ -133,17 +133,17 @@ class TestDrugnameStandardizer(unittest.TestCase):
         expected_output = ["VENETOCLAX", "UNKNOWN_DRUG", "VENETOCLAX", "uknDrug"]
         self.assertEqual(output_data, expected_output)
 
-    def test_csv_custom_separator(self):
-        input_csv = "id|drug_name\n1|ABT199\n2|RG7601\n3|VENETOCLAX [WHO-DD]"
-        input_file = self._create_temp_file(input_csv, "test_input_pipe.csv")
-        output_file = "test_output_pipe.csv"
+    def test_tsv_custom_separator(self):
+        input_tsv = "id|drug_name\n1|ABT199\n2|RG7601\n3|VENETOCLAX [WHO-DD]"
+        input_file = self._create_temp_file(input_tsv, "test_input_pipe.tsv")
+        output_file = "test_output_pipe.tsv"
         self.temp_files.append(output_file)
 
         standardize(
             input_data=str(input_file),
             output_file=output_file,
-            file_type="csv",
-            column_index=1,
+            file_type="tsv",
+            column_drug=1,
             separator="|",
         )
 
