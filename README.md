@@ -135,10 +135,11 @@ pip install drugname_standardizer
 
 ### Requirements:
 
-- Python 3.7+
+- Python 3.12+
 - Dependencies:
-  - `pandas`
-  - `requests`
+  - `pandas >= 2.2.2`
+  - `requests >= 2.32.2`
+  - `tqdm >= 4.66.4`
 
 ---
 
