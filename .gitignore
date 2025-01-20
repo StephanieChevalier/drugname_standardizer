@@ -12,6 +12,7 @@ __pycache__/
 # Virtual environments
 .env/
 .venv/
+Pipfile*
 
 # System files
 .DS_Store
