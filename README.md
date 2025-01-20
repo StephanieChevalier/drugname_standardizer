@@ -164,7 +164,8 @@ drugname_standardizer/
 │   ├── __init__.py               # Package initialization
 │   ├── standardizer.py           # Core logic for name standardization
 │   └── data/
-│       └── UNII_Names.txt  # UNII Names List file (ensured to be no older than 1 month when available)
+│       ├── UNII_Names.txt  # UNII Names List file (ensured to be no older than 1 month when available)
+│       └── UNII_dict.pkl   # parsed UNII Names List
 ├── tests/
 │   ├── __init__.py               
 │   └── test_standardizer.py      # Unit tests for the package
@@ -178,4 +179,4 @@ drugname_standardizer/
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/StephanieChevalier/drugname_standardizer/blob/main/LICENSE) file for details.

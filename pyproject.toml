@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "drugname_standardizer"
-version = "1.1.8"
+version = "1.1.9"
 description = "A Python tool for standardizing drug names using the latest FDA's UNII Names list."
 readme = "README.md"
 authors = [
@@ -35,7 +35,7 @@ include = ["drugname_standardizer*"]
 include-package-data = true
 
 [tool.setuptools.package-data]
-"drugname_standardizer" = ["data/UNII_Names.txt"]
+"drugname_standardizer" = ["data/UNII_Names.txt", "data/UNII_dict.pkl"]
 
 [project.scripts]
 drugname_standardizer = "drugname_standardizer.standardizer:main"

@@ -1,1 +1,2 @@
 include drugname_standardizer/data/UNII_Names.txt
+include drugname_standardizer/data/UNII_dict.pkl

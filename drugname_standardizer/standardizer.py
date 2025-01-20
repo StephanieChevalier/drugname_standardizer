@@ -115,6 +115,8 @@ def parse_unii_file(file_path: str = None):
     Raises:
         FileNotFoundError: If a UNII path is given but the file does not exist.
     """
+    dict_pickle_path = DEFAULT_UNII_FILE_PATH / "UNII_dict.pkl"
+
     if file_path: # If user gives a path, go for it and raise and error (with advice) if incorrect.
         file_path = Path(file_path)
         if not file_path.exists():
@@ -134,6 +136,10 @@ def parse_unii_file(file_path: str = None):
                 one_month_ago = datetime.now() - timedelta(days=30)
                 if modification_time > one_month_ago:
                     file_path = file
+                    if dict_pickle_path.exists():
+                        with open(dict_pickle_path, "rb") as f_dict:
+                            parsed_dict = pickle.load(f_dict)
+                        return parsed_dict
 
     if file_path is None:
         print(f"Attempting to download the latest UNII file...")
@@ -166,6 +172,8 @@ def parse_unii_file(file_path: str = None):
     #         parsed_dict[name].append(display_name)
 
     parsed_dict = resolve_ambiguities(parsed_dict)
+    with open(dict_pickle_path, "wb") as f_dict:
+        pickle.dump(parsed_dict, f_dict)
     return parsed_dict
 
 def resolve_ambiguities(parsed_dict):
