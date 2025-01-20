@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "drugname_standardizer"
-version = "1.1.2"
+version = "1.1.4"
 description = "A Python tool for standardizing drug names using the latest FDA's UNII Names list."
 readme = "README.md"
 authors = [
@@ -12,11 +12,11 @@ authors = [
 ]
 license = {text = "MIT"}
 dependencies = [
-    "pandas>=2.2,<3.0",
-    "requests>=2.32,<3.0",
-    "tqdm>=4.66,<5.0"
+    "pandas>=2.2.2",
+    "requests>=2.32.2",
+    "tqdm>=4.66.4"
 ]
-requires-python = ">=3.7"
+requires-python = ">=3.12"
 keywords = ["drugs", "drug name synonyms", "standardization", "FDA", "UNII"]
 classifiers = [
     "Programming Language :: Python :: 3",
