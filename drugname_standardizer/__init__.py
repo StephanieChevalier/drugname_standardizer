@@ -14,9 +14,9 @@ Usage:
 Release Date: January 16, 2025
 """
 
-__version__ = "1.1.2"
+__version__ = "1.1.7"
 __author__ = "Stéphanie Chevalier"
 __license__ = "MIT"
 __release_date__ = "2025-01-16"
 
-from .standardizer import parse_unii_file, standardize
+from .standardizer import parse_unii_file, standardize, main
