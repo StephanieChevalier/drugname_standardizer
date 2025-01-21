@@ -1,6 +1,6 @@
 # Drugname Standardizer
 
-The **Drugname Standardizer** is a Python tool for standardizing drug names using [the official FDA's UNII Names List archive](https://precision.fda.gov/uniisearch/archive). It notably supports both JSON and TSV input formats, making it easy to ensure consistent drug naming in datasets.
+The **Drugname Standardizer** is a Python tool for standardizing drug names using [the official FDA's UNII Names List archive](https://precision.fda.gov/uniisearch/archive). It notably supports both JSON and TSV/CSV input formats, making it easy to ensure consistent drug naming in datasets.
 
 ---
 
@@ -60,26 +60,27 @@ print(preferred_names)  # Outputs: ["VENETOCLAX", "TIPRANAVIR", "IODOPYRACET"]
 **- Standardize a JSON file:**
 ```python
 standardize(
-    input_file="drugs.json",
-    output_file="standardized_drugs.json",
-    file_type="json"
+    input_file = "drugs.json",
+    file_type = "json",
+    output_file = "standardized_drugs.json"
 )
 # Outputs: Standardized JSON file saved as standardized_drugs.json
 ```
 
-**- Standardize a TSV file:**
+**- Standardize a TSV/CSV file:**
 ```python
 standardize(
-    input_file="dataset.tsv",
-    file_type="tsv",
-    column_drug=0
+    input_file = "dataset.csv",
+    file_type = "tsv",
+    column_drug = 0,
+    separator = ","
 )
-# Outputs: Standardized TSV file saved as dataset_drug_standardized.tsv
+# Outputs: Standardized TSV file saved as dataset_drug_standardized.csv
 ```
 
 ### Command-Line Interface
 
-You can also use a CLI for standardizing JSON and TSV files.
+You can also use a CLI for standardizing a drug name, a JSON file or a TSV/CSV file.
 
 * Required arguments:
     - `--input`, `-i`: **A drug name or the path to a JSON/TSV file**
@@ -94,7 +95,7 @@ You can also use a CLI for standardizing JSON and TSV files.
 
 **- Get the preferred name for a specific drug:**
 ```bash
-drugname_standardizer -i "DynaCirc"
+drugname_standardizer -i DynaCirc
 ```
 
 **- Standardize a JSON file:**
@@ -103,9 +104,9 @@ drugname_standardizer -i drugs.json -f json
 ```
 
 **- Standardize a TSV file:**
-e.g., using a comma as separator and a custom file name for the output:
+e.g., using a pipe as separator and a custom file name for the output:
 ```bash
-drugname_standardizer -i dataset.tsv -f tsv -c 2 -s "," -o standardized_dataset.tsv
+drugname_standardizer -i dataset.tsv -f tsv -c 2 -s "|" -o standardized_dataset.tsv
 ```
 
 ---
@@ -125,13 +126,6 @@ git clone https://github.com/StephanieChevalier/drugname_standardizer.git
 cd drugname_standardizer
 pip install -r requirements.txt
 ```
-<!--
-### Install the package via `pip`:
-
-```bash
-pip install drugname_standardizer
-```
--->
 
 ### Requirements:
 
