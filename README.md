@@ -72,7 +72,7 @@ standardize(
 standardize(
     input_file="dataset.tsv",
     file_type="tsv",
-    column_drug=1
+    column_drug=0
 )
 # Outputs: Standardized TSV file saved as dataset_drug_standardized.tsv
 ```
@@ -86,7 +86,7 @@ You can also use a CLI for standardizing JSON and TSV files.
 * Optional arguments:
   - `--file_type`, `-f`: **Type of the input file** (`json` or `tsv`)
   - `--output`, `-o`: **The output file name** (relative path can be given). Defaults: the input file name with `_drug_standardized` added before the extension.
-  - `--column_drug`, `-c`: **Index of the column containing the drug names to standardize** (required for TSV files).
+  - `--column_drug`, `-c`: **Index of the column containing the drug names to standardize** (required for TSV files). Starts at 0: 1st column = column 0.
   - `--separator`, `-s`: **Field separator for TSV files**. Defaults: `\t`.
   - `--unii_file`, `-u`: **Path to a UNII Names List file**. Defaults: automatic download of the latest version.
 

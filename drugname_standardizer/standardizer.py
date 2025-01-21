@@ -295,9 +295,9 @@ def standardize(
             is a file path. Ignored for single names or lists.
         column_drug (int, optional):
             For TSV input files, the index of the column containing drug names to standardize.
-            Required if `file_type` is "tsv".
+            Required if `file_type` is "tsv". Starts at 0: 1st column = column 0.
         separator (str, optional):
-            Field separator for TSV files. Defaults to ",". Only applicable if `file_type` is "tsv".
+            Field separator for TSV files. Defaults to "\t". Only applicable if `file_type` is "tsv".
         unii_file (str, optional):
             Path to a UNII file containing the drug name mappings, if a particular prior version is
             preferred. Defaults to a pre-defined UNII file location where the automatic download of
@@ -376,8 +376,8 @@ def main():
     parser.add_argument("-i", "--input", required=True, help="Input file path (JSON or TSV).")
     parser.add_argument("-o", "--output", help="Output file path. Defaults to input file name with '_drug_standardized' before the extension.")
     parser.add_argument("-f", "--file_type", choices=["json", "tsv"], required=False, help="Type of input file.")
-    parser.add_argument("-c", "--column_drug", type=int, help="Index of the column containing the drug names to standardize (starts at 0 -> 1st column = column 0). Required for TSV input.")
-    parser.add_argument("-s", "--separator", type=str, default="\t", help="Field separator for TSV input. Defaults to ','.")
+    parser.add_argument("-c", "--column_drug", type=int, help="Index of the column containing the drug names to standardize (starts at 0: 1st column = column 0). Required for TSV input.")
+    parser.add_argument("-s", "--separator", type=str, default="\t", help="Field separator for TSV input. Defaults to '\t'.")
     parser.add_argument("-u", "--unii_file", default=None, help="Path to the UNII file.")
 
     args = parser.parse_args()
