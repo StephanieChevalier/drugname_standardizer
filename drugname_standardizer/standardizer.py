@@ -239,6 +239,8 @@ def standardize_tsv_file_line_by_line(input_file, output_file, column_drug, sepa
     Raises:
         ValueError: If the column index is invalid.
     """
+    total_size = os.path.getsize(input_file)
+
     with open(input_file, 'r', encoding='utf-8') as infile, open(output_file, 'w', encoding='utf-8') as outfile:
         # Read the header to validate the column index and write it to output
         header = infile.readline()
@@ -249,16 +251,17 @@ def standardize_tsv_file_line_by_line(input_file, output_file, column_drug, sepa
 
         outfile.write(header)
 
-        # Process the file line by line
-        for line in infile:
-            line = line.strip("\n")
-            fields = line.split(separator)
-            # Standardize the required column
-            if column_drug < len(fields):
-                fields[column_drug] = parsed_dict.get(fields[column_drug].upper(), fields[column_drug])
-
-            # Write the modified line to output
-            outfile.write(separator.join(fields) + '\n')
+        with tqdm(total=total_size, unit="B", unit_scale=True, desc="Standardization") as pbar:
+            # Process the file line by line
+            for line in infile:
+                line = line.strip("\n")
+                fields = line.split(separator)
+                # Standardize the required column
+                if column_drug < len(fields):
+                    fields[column_drug] = parsed_dict.get(fields[column_drug].upper(), fields[column_drug])
+                # Write the modified line to output
+                outfile.write(separator.join(fields) + '\n')
+                pbar.update(len(line.encode('utf-8')))  # Update progress by bytes processed
 
     print(f"Standardized TSV file saved as {output_file}")
 

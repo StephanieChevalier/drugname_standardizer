@@ -14,7 +14,7 @@ Usage:
 Release Date: January 16, 2025
 """
 
-__version__ = "1.2.0"
+__version__ = "1.2.1"
 __author__ = "Stéphanie Chevalier"
 __license__ = "MIT"
 __release_date__ = "2025-01-16"
