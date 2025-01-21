@@ -17,11 +17,12 @@ dependencies = [
     "tqdm>=4.66.4"
 ]
 requires-python = ">=3.12"
-keywords = ["drugs", "drug name synonyms", "standardization", "FDA", "UNII"]
+keywords = ["drug", "synonyms", "standardization", "FDA", "UNII"]
 classifiers = [
-    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
 ]
 
 [project.urls]
