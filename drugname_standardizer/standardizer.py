@@ -1,5 +1,4 @@
 import json
-import pandas as pd
 from pathlib import Path
 import requests
 import zipfile
@@ -12,6 +11,7 @@ from datetime import datetime, timedelta
 DEFAULT_UNII_FILE_PATH = Path(__file__).parent / "data"
 #DEFAULT_UNII_FILE = Path(__file__).parent / "data" / "UNII_Names_20Dec2024.txt"
 DOWNLOAD_URL = "https://precision.fda.gov/uniisearch/archive/latest/UNIIs.zip"
+
 
 class DownloadError(Exception):
     """Custom exception for download-related issues."""
@@ -103,6 +103,7 @@ def download_unii_file(download_url: str = DOWNLOAD_URL, extract_to: Path = DEFA
             print(f"----------------------------------------------------------------------")
             return dest_file_path
 
+
 def parse_unii_file(file_path: str = None):
     """Parse the UNII source file to create a dictionary of drug name associations.
 
@@ -176,6 +177,7 @@ def parse_unii_file(file_path: str = None):
         pickle.dump(parsed_dict, f_dict)
     return parsed_dict
 
+
 def resolve_ambiguities(parsed_dict):
     """Resolve ambiguities by selecting the shortest preferred name."""
     return {name: min(values, key=len) if len(values) > 1 else values[0] for name, values in parsed_dict.items()}
@@ -197,32 +199,6 @@ def standardize_json_file(input_file, output_file, parsed_dict):
     with open(output_file, "w") as f:
         json.dump(standardized_names, f, indent=4)
     print(f"Standardized JSON file saved as {output_file}")
-
-def standardize_tsv_file(input_file, output_file, column_drug, separator, parsed_dict):
-    """
-    Standardize drug names in a TSV file.
-
-    Args:
-        input_file (str): Path to the input TSV file.
-        output_file (str): Path to the output standardized TSV file.
-        column_drug (int): The index of the column containing drug names.
-        separator (str): Field separator used in the TSV file.
-        parsed_dict (dict): Dictionary mapping drug names to standardized names.
-
-    Raises:
-        ValueError: If the column index is invalid or not specified.
-    """
-    df = pd.read_tsv(input_file, sep=separator)
-
-    # Validate column index
-    if column_drug is None or column_drug < 0 or column_drug >= len(df.columns):
-        raise ValueError("The index of the column containing the drug name to standardize must be specified.")
-
-    column_name = df.columns[column_drug]
-    df[column_name] = df[column_name].apply(lambda x: parsed_dict.get(str(x).upper(), x))
-    df.to_tsv(output_file, index=False, sep=separator)
-    print(f"Standardized TSV file saved as {output_file}")
-
 
 
 def standardize_tsv_file_line_by_line(input_file, output_file, column_drug, separator, parsed_dict):

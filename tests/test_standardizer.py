@@ -1,7 +1,6 @@
 import unittest
 import os
 import json
-import pandas as pd
 from io import StringIO
 from pathlib import Path
 from drugname_standardizer.standardizer import parse_unii_file, standardize, resolve_ambiguities, download_unii_file, DownloadError
