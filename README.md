@@ -129,11 +129,10 @@ pip install -r requirements.txt
 
 ### Requirements:
 
-- Python 3.12+
+- Python 3.7+
 - Dependencies:
-  - `pandas >= 2.2.2`
-  - `requests >= 2.32.2`
-  - `tqdm >= 4.66.4`
+  - `requests >= 2`
+  - `tqdm >= 4`
 
 ---
 
