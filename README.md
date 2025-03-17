@@ -6,8 +6,8 @@ The **Drugname Standardizer** is a Python tool for standardizing drug names usin
 
 ## Features
 
-- **A trusted source for drug synonyms** : the package automatically downloads the latest version of the *UNII Names* file from [the official FDA repository](https://precision.fda.gov/uniisearch/archive/latest/UNIIs.zip).
-The `UNII_Names.txt` is saved to the package's `data/` folder for future use. The user can also choose to indicate another local *UNII Names* file if a particular version is preferred.
+- **A trusted source for drug synonyms** : the package automatically downloads the latest version of the *UNII Names* file from [the official FDA repository](https://precision.fda.gov/uniisearch/archive/latest/UNIIs.zip) (montly check of an update).
+The `UNII_Names.txt` is saved to the package's `data/` folder for use without redownload before next update. The user can also choose to indicate another local *UNII Names* file if a particular version is preferred.
 
 - **Parsing of the FDA's UNII Names List to map drug names** (code / official / systematic / common / brand names) **to a single preferred name** (i.e. the *Display Name* of the UNII Names file).
 
