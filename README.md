@@ -2,7 +2,7 @@
 
 The **Drugname Standardizer** is a Python tool for standardizing drug names using [the official FDA's UNII Names List archive](https://precision.fda.gov/uniisearch/archive). It notably supports both JSON and TSV/CSV input formats, making it easy to ensure consistent drug naming in datasets.
 
-![flowchart](img/flowchart_alpha.png)
+![flowchart](https://raw.githubusercontent.com/StephanieChevalier/drugname_standardizer/main/img/flowchart_alpha.png)
 
 ---
 
