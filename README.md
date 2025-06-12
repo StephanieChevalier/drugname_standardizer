@@ -18,13 +18,13 @@ The **Drugname Standardizer** is a Python package and CLI tool for standardizing
    - A JSON file with a list of names
    - A TSV/CSV file with a column of names
 
-- ✅ **Python package interface** *(OOP style)* and **CLI interface** *(via `drugname-standardizer` command)*
+- ✅ **Python package interface** *(OOP style)* and **CLI interface** *(via `drugname_standardizer` command)*
 
 - ✅ **Ambiguity resolution**: for entries with multiple *display names* in the FDA's UNII Names file, the shortest one is chosen. Rare but exists: 55 / 986397 associations in `UNII_Names_20Dec2024.txt`. For example, for `PRN1008` the ambiguity is solved by keeping `RILZABRUTINIB` whereas 2 associations exist:
    - `PRN1008`	...	... `RILZABRUTINIB, (.ALPHA.E,3S)-`
    - `PRN1008`	...	... `RILZABRUTINIB`  
 
-> ⚠️ There are code / official / systematic / common / brand names for drugs. Some are linked to different level of details about the compound.
+⚠️ There are code / official / systematic / common / brand names for drugs. Some are linked to different level of details about the compound.
 **This tool favors "high-level" naming** (i.e. the less detailled one) : detailed systematic or branded names are mapped to a standardized, less verbose preferred name (as defined by the FDA Display Name field). For instance : both `3'-((1R)-1-((6R)-5,6-DIHYDRO-4-HYDROXY-2-OXO-6-PHENETHYL-6-PROPYL-2H-PYRAN-3-YL)PROPYL)-5-(TRIFLUOROMETHYL)-2-PYRIDINESULFONANILIDE` (systematic name) and `Aptivus` (brand name) become `TIPRANAVIR`.
 
 ---
@@ -90,7 +90,7 @@ Once installed, you can use the CLI tool directly:
 ### Basic syntax
 
 ```bash
-drug-standardizer -i INPUT [options]
+drugname_standardizer -i INPUT [options]
 ```
 
 ### Required:
@@ -112,13 +112,13 @@ drug-standardizer -i INPUT [options]
 * Standardize a drug name:
 
   ```bash
-  drugname-standardizer -i GDC-0199
+  drugname_standardizer -i GDC-0199
   ```
 
 * 📄 Standardize a JSON list:
 
   ```bash
-  drugname-standardizer -i drugs.json -f json
+  drugname_standardizer -i drugs.json -f json
   ```
   The `-f json` flag is required so the CLI interprets the input file correctly.  
   If `-o` is not specified, the output will be saved as `drugs_drug_standardized.json` by default.
@@ -126,7 +126,7 @@ drug-standardizer -i INPUT [options]
 * 📄 Standardize a TSV file (e.g., drug names in column 2, pipe separator):
 
   ```bash
-  drugname-standardizer -i dataset.tsv -f tsv -c 2 -s "|" -o standardized_dataset.tsv
+  drugname_standardizer -i dataset.tsv -f tsv -c 2 -s "|" -o standardized_dataset.tsv
   ```
   The `-f tsv` and `-c` flags are required for TSV/CSV files.  
   If `-o` is not specified, the output is saved as `dataset_drug_standardized.json` by default.
@@ -148,8 +148,6 @@ git clone https://github.com/StephanieChevalier/drugname_standardizer.git
 cd drugname_standardizer
 pip install -r requirements.txt
 ```
-
-> `drug-standardizer` will then be available as a CLI command.
 
 ### Requirements
 
