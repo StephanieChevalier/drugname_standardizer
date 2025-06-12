@@ -11,7 +11,7 @@ Usage:
     print(ds.standardize_name("GDC-0199"))  # Output: VENETOCLAX
 """
 
-__version__ = "1.2.6"
+__version__ = "1.2.7"
 __author__ = "Stéphanie Chevalier"
 __license__ = "MIT"
 __release_date__ = "2025-06-12"
