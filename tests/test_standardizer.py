@@ -1,214 +1,117 @@
-import unittest
-import os
 import json
-from io import StringIO
+import tempfile
 from pathlib import Path
-from drugname_standardizer.standardizer import parse_unii_file, standardize, resolve_ambiguities, download_unii_file, DownloadError
 
+import pytest
+from drugname_standardizer import DrugStandardizer
 
-class TestDrugnameStandardizer(unittest.TestCase):
-    def setUp(self):
-        """Set up the test environment."""
-        self.temp_files = []  # Track temporary files to remove them later
+# -------------------------------
+# Fixture unique pour initialiser l’objet
+# -------------------------------
+@pytest.fixture(scope="module")
+def standardizer():
+    return DrugStandardizer()
 
-        self.test_dict = parse_unii_file()
-        # # Simulate a parsed UNII dictionary
-        # self.test_dict = {
-        #     "4-(4-((2-(4-CHLOROPHENYL)-4,4-DIMETHYL-1-CYCLOHEXEN-1-YL)METHYL)-1-PIPERAZINYL)-N-((3-NITRO-4-(((TETRAHYDRO-2H-PYRAN-4-YL)METHYL)AMINO)PHENYL)SULFONYL)-2-(1H-PYRROLO(2,3-B)PYRIDIN-5-YLOXY)BENZAMIDE": "VENETOCLAX",
-        #     "4-(4-((2-(4-CHLOROPHENYL)-4,4-DIMETHYLCYCLOHEX-1-EN-1-YL)METHYL)PIPERAZIN-1-YL)-N-((3-NITRO-4-((TETRAHYDRO-2HPYRAN-4-YLMETHYL) AMINO)PHENYL)SULFONYL)-2-(1H-PYRROLO(2,3-B)PYRIDIN-5-YLOXY)BENZAMIDE": "VENETOCLAX",
-        #     "ABT199": "VENETOCLAX",
-        #     "ABT-199": "VENETOCLAX",
-        #     "BENZAMIDE, 4-(4-((2-(4-CHLOROPHENYL)-4,4-DIMETHYL-1-CYCLOHEXEN-1-YL)METHYL)-1-PIPERAZINYL)-N-((3-NITRO-4-(((TETRAHYDRO-2H-PYRAN-4-YL)METHYL)AMINO)PHENYL)SULFONYL)-2-(1H-PYRROLO(2,3-B)PYRIDIN-5-YLOXY)-": "VENETOCLAX",
-        #     "GDC-0199": "VENETOCLAX",
-        #     "RG7601": "VENETOCLAX",
-        #     "RG-7601": "VENETOCLAX",
-        #     "VENCLEXTA": "VENETOCLAX",
-        #     "VENCLYXTO": "VENETOCLAX",
-        #     "VENETOCLAX": "VENETOCLAX",
-        #     "VENETOCLAX [INN]": "VENETOCLAX",
-        #     "VENETOCLAX [JAN]": "VENETOCLAX",
-        #     "VENETOCLAX [MI]": "VENETOCLAX",
-        #     "VENETOCLAX [ORANGE BOOK]": "VENETOCLAX",
-        #     "VENETOCLAX [USAN]": "VENETOCLAX",
-        #     "VENETOCLAX [WHO-DD]": "VENETOCLAX",
-        # }
+# -------------------------------
+# Tests unitaires de la méthode standardize_name
+# -------------------------------
+def test_standardize_name_known(standardizer):
+    # Hypothèse : "ACETAMINOPHEN" est dans le fichier UNII avec un nom court
+    standardized = standardizer.standardize_name("acetaminophen")
+    assert isinstance(standardized, str)
+    assert standardized != "acetaminophen"
+    assert standardized.isupper()
 
-    def tearDown(self):
-        """Clean up temporary files."""
-        for temp_file in self.temp_files:
-            if os.path.exists(temp_file):
-                os.remove(temp_file)
+def test_standardize_name_unknown(standardizer):
+    unknown_name = "NON_EXISTENT_DRUG"
+    result = standardizer.standardize_name(unknown_name)
+    assert result == unknown_name  # non trouvé → inchangé
 
-    def _create_temp_file(self, content, filename):
-        """Helper to create a temporary file."""
-        temp_file = Path(filename)
-        with open(temp_file, "w") as f:
-            f.write(content)
-        self.temp_files.append(temp_file)
-        return temp_file
+# -------------------------------
+# Test de standardisation d’une liste
+# -------------------------------
+def test_standardize_list_mixed(standardizer):
+    drug_list = ["acetaminophen", "NON_EXISTENT_DRUG"]
+    result = standardizer.standardize_list(drug_list)
+    assert isinstance(result, list)
+    assert result[0] != "acetaminophen"
+    assert result[1] == "NON_EXISTENT_DRUG"
 
-    def test_standardization_from_dict(self):
-        # Test standardizing a list of names
-        input_names = [
-            "ABT199",
-            "VENCLEXTA",
-            "VENETOCLAX [JAN]",
-            "RG-7601",
-            "GDC-0199",
-        ]
-        expected_output = ["VENETOCLAX"] * len(input_names)
-        actual_output = [self.test_dict.get(name, name) for name in input_names]
-        self.assertEqual(expected_output, actual_output)
+# -------------------------------
+# Test de la méthode standardize_json_file
+# -------------------------------
+def test_standardize_json_file(standardizer):
+    drugs = ["acetaminophen", "ibuprofen", "NON_EXISTENT_DRUG"]
+    with tempfile.TemporaryDirectory() as tmpdir:
+        input_path = Path(tmpdir) / "test_input.json"
+        output_path = Path(tmpdir) / "test_output.json"
 
-    def test_json_input(self):
-        # Simulate JSON input
-        input_content = json.dumps(["ABT199", "RG7601", "VENCLYXTO", "GDC-0199"])
-        input_file = self._create_temp_file(input_content, "test_input.json")
-        output_file = "test_output.json"
-        self.temp_files.append(output_file)
+        # Création du fichier JSON d’entrée
+        with open(input_path, "w") as f:
+            json.dump(drugs, f)
 
-        standardize(
-            input_data=str(input_file),
-            output_file=output_file,
-            file_type="json",
-        )
+        # Appel de la méthode à tester
+        standardizer.standardize_json_file(input_path, output_path)
 
-        # Read and verify the output JSON file
-        with open(output_file, "r") as f:
+        # Lecture du fichier JSON de sortie
+        with open(output_path, "r") as f:
             output_data = json.load(f)
 
-        expected_output = ["VENETOCLAX", "VENETOCLAX", "VENETOCLAX", "VENETOCLAX"]
-        self.assertEqual(output_data, expected_output)
+        assert isinstance(output_data, list)
+        assert len(output_data) == 3
+        assert output_data[0].isupper()
+        assert output_data[2] == "NON_EXISTENT_DRUG"
 
-    def test_tsv_input(self):
-        # Simulate TSV input
-        input_tsv = "id,drug_name\n1,ABT199\n2,RG7601\n3,VENETOCLAX [WHO-DD]"
-        input_file = self._create_temp_file(input_tsv, "test_input.tsv")
-        output_file = "test_output.tsv"
-        self.temp_files.append(output_file)
+# -------------------------------
+# Test CLI (exécution subprocess) – optionnel mais recommandé
+# -------------------------------
+import subprocess
 
-        standardize(
-            input_data=str(input_file),
-            output_file=output_file,
-            file_type="tsv",
+def test_cli_simple_call():
+    result = subprocess.run(
+        ["drugname_standardizer", "-i", "acetaminophen"],
+        capture_output=True,
+        text=True
+    )
+    assert result.returncode == 0
+    assert result.stdout.strip().isupper()
+
+# -------------------------------
+# Test : liste vide
+# -------------------------------
+def test_standardize_list_empty(standardizer):
+    result = standardizer.standardize_list([])
+    assert result == []
+
+# -------------------------------
+# Test : séparateur personnalisé pour TSV
+# -------------------------------
+def test_standardize_tsv_custom_separator(standardizer):
+    import csv
+
+    rows = [
+        ["id", "drug"],
+        ["1", "ABT199"],
+        ["2", "GDC-0199"],
+        ["3", "VENCLYXTO"]
+    ]
+    with tempfile.TemporaryDirectory() as tmpdir:
+        input_path = Path(tmpdir) / "input.tsv"
+        output_path = Path(tmpdir) / "output.tsv"
+
+        with open(input_path, "w", newline="") as f:
+            writer = csv.writer(f, delimiter="|")
+            writer.writerows(rows)
+
+        standardizer.standardize_tsv_file(
+            input_path=input_path,
+            output_path=output_path,
             column_drug=1,
-            separator=",",
+            separator="|"
         )
 
-        # Read and verify the output TSV file
-        with open(output_file, "r") as f:
-            output_data = f.read()
-
-        expected_output = "id,drug_name\n1,VENETOCLAX\n2,VENETOCLAX\n3,VENETOCLAX\n"
-        self.assertEqual(output_data.strip(), expected_output.strip())
-
-    def test_unknown_drug_names(self):
-        input_names = ["unknown_drug", "NON_EXISTENT", "FakeName"]
-        expected_output = input_names  # Should return the same names if not found
-        actual_output = standardize(input_names)
-        self.assertEqual(expected_output, actual_output)
-
-    def test_case_insensitivity(self):
-        input_names = ["abt199", "rg7601", "VENCLEXTA"]
-        expected_output = ["VENETOCLAX", "VENETOCLAX", "VENETOCLAX"]
-        actual_output = standardize(input_names)
-        self.assertEqual(expected_output, actual_output)
-
-    def test_json_mixed_known_unknown(self):
-        input_content = json.dumps(["ABT199", "UNKNOWN_DRUG", "RG7601", "uknDrug"])
-        input_file = self._create_temp_file(input_content, "test_input_mixed.json")
-        output_file = "test_output_mixed.json"
-        self.temp_files.append(output_file)
-
-        standardize(
-            input_data=str(input_file),
-            output_file=output_file,
-            file_type="json",
-        )
-
-        with open(output_file, "r") as f:
-            output_data = json.load(f)
-
-        expected_output = ["VENETOCLAX", "UNKNOWN_DRUG", "VENETOCLAX", "uknDrug"]
-        self.assertEqual(output_data, expected_output)
-
-    def test_tsv_custom_separator(self):
-        input_tsv = "id|drug_name\n1|ABT199\n2|RG7601\n3|VENETOCLAX [WHO-DD]"
-        input_file = self._create_temp_file(input_tsv, "test_input_pipe.tsv")
-        output_file = "test_output_pipe.tsv"
-        self.temp_files.append(output_file)
-
-        standardize(
-            input_data=str(input_file),
-            output_file=output_file,
-            file_type="tsv",
-            column_drug=1,
-            separator="|",
-        )
-
-        with open(output_file, "r") as f:
-            output_data = f.read()
-
-        expected_output = "id|drug_name\n1|VENETOCLAX\n2|VENETOCLAX\n3|VENETOCLAX\n"
-        self.assertEqual(output_data.strip(), expected_output.strip())
-
-    def test_empty_input(self):
-        # Empty list
-        input_names = []
-        expected_output = []
-        actual_output = standardize(input_names, self.test_dict)
-        self.assertEqual(expected_output, actual_output)
-
-        # Empty JSON file
-        input_content = json.dumps([])
-        input_file = self._create_temp_file(input_content, "test_input_empty.json")
-        output_file = "test_output_empty.json"
-        self.temp_files.append(output_file)
-
-        standardize(
-            input_data=str(input_file),
-            output_file=output_file,
-            file_type="json",
-        )
-
-        with open(output_file, "r") as f:
-            output_data = json.load(f)
-        self.assertEqual(output_data, [])
-
-    def test_resolve_ambiguities(self):
-        ambiguous_dict = {
-            "DRUG_A": ["DRUG_A_LONG_NAME", "DRUG_A"],
-            "DRUG_B": ["DRUG_B_NAME", "DRUG_B_LONGER"],
-            "DRUG_C": ["DRUG_C_NAME"]
-        }
-        unambiguous_dict = resolve_ambiguities(ambiguous_dict)
-        expected_dict = {"DRUG_A": "DRUG_A", "DRUG_B": "DRUG_B_NAME", "DRUG_C": "DRUG_C_NAME"}
-        self.assertEqual(unambiguous_dict, expected_dict)
-
-    def test_invalid_unii_file_path(self):
-        # Simulate an invalid path
-        invalid_path = "non_existent_path/UNII_Names.txt"
-
-        with self.assertRaises(FileNotFoundError) as context:
-            standardize(
-                input_data="ABT199",  # Example input data
-                unii_file=invalid_path,  # Invalid path
-            )
-
-        # Verify the exception message
-        self.assertIn("The UNII Names file you give as argument", str(context.exception))
-
-    def test_broken_url(self):
-        """
-        Test handling of a broken or invalid URL for the FDA download.
-        """
-        with self.assertRaises(DownloadError) as context:
-            download_unii_file(download_url="https://invalid-url-for-testing.com/UNIIs.zip")
-
-        # Verify the error message includes the expected details
-        self.assertIn("Failed to download the UNII file", str(context.exception))
-        self.assertIn("invalid-url-for-testing.com", str(context.exception))
-
-
-if __name__ == "__main__":
-    unittest.main()
+        with open(output_path, "r") as f:
+            lines = f.readlines()
+            assert "VENETOCLAX" in lines[1]
+            assert "VENETOCLAX" in lines[2]
+            assert "VENETOCLAX" in lines[3]

@@ -1,22 +1,19 @@
 """
 Drugname Standardizer Package
 
-This package is a tool for standardizing drug names based on the FDA's UNII
-Names List archive. It supports to directly standardize from JSON and TSV.
-
-Modules:
-- standardizer: Core functions for parsing the UNII file, resolving ambiguities,
-  and standardizing drug names in files.
+This package is a tool for standardizing drug names using the FDA UNII Names List archive.
+It allows standardization of individual names, lists, or file-based inputs (JSON, TSV).
 
 Usage:
-    from drugname_standardizer import standardize
+    from drugname_standardizer import DrugStandardizer
 
-Release Date: January 16, 2025
+    ds = DrugStandardizer()
+    print(ds.standardize_name("GDC-0199"))  # Output: VENETOCLAX
 """
 
-__version__ = "1.2.1"
+__version__ = "1.2.6"
 __author__ = "Stéphanie Chevalier"
 __license__ = "MIT"
-__release_date__ = "2025-01-16"
+__release_date__ = "2025-06-12"
 
-from .standardizer import parse_unii_file, standardize, main
+from .standardizer import DrugStandardizer
